@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "version": "0.1.0",
+  "name": "MovesCount Batch Exporter",
+  "description":
+    "This extension will batch export your moves at movescount in your desired format (GPX, KML, etc)",
+  "version": "1.0",
+  "browser_action": {
+    "default_icon": "assets/icon48.png",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  },
+  "permissions": [
+    "clipboardRead",
+    "clipboardWrite",
+    "contentSettings",
+    "cookies",
+    "notifications",
+    "tabs",
+    "http://www.movescount.com/*",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://www.movescount.com/*"],
+      "js": ["modifyhtml.js"]
+    }
+  ]
+}
