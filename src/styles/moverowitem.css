@@ -1,0 +1,7 @@
+.row-title {
+  display: flex;
+  flex-direction: row;
+}
+.row-title span {
+  margin-left: 10px;
+}

@@ -1,9 +1,11 @@
 import axios from 'axios';
-import moment from 'moment';
+import MoveRowItem from './MoveRowItem';
 import React, { Component } from 'react';
 import icon from '../assets/icon128.png';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'font-awesome/css/font-awesome.min.css';
 import '../styles/index.css';
-
+import '../styles/theme.css';
 const MAX_NUM = 100;
 
 class Popup extends Component {
@@ -42,23 +44,11 @@ class Popup extends Component {
   listData() {
     const sample = this.paginate(this.state.moves, MAX_NUM, this.state.page);
     return (
-      <div>
-        <ul>
-          {sample.map(s => (
-            <div key={s.MoveID}>
-              <a
-                onClick={e => {
-                  console.log(s);
-                }}
-                href={`http://www.movescount.com/move/export?id=${s.MoveID}?format=gpx`}
-              >
-                {moment(s.StartTime).format('MMM DD, YYYY')}
-              </a>
-            </div>
-          ))}
-        </ul>
+      <div className="container">
+        <ul>{sample.map(s => <MoveRowItem key={s.MoveID} move={s} />)}</ul>
         {this.state.page > 1 ? (
           <a
+            className="btn btn-default"
             href="#"
             onClick={e => {
               let page = this.state.page;
@@ -70,6 +60,7 @@ class Popup extends Component {
           </a>
         ) : null}
         <a
+          className="btn btn-default"
           href="#"
           onClick={e => {
             let page = this.state.page;
@@ -86,9 +77,7 @@ class Popup extends Component {
   fetchData() {
     const self = this;
     axios
-      .get('http://www.movescount.com/Move/MoveList', {
-        headers: { cookie: this.state.cookie }
-      })
+      .get('http://www.movescount.com/Move/MoveList')
       .then(response => {
         console.log(response);
         const json = response.data;

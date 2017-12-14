@@ -19,6 +19,7 @@
     "clipboardWrite",
     "contentSettings",
     "cookies",
+    "downloads",
     "notifications",
     "tabs",
     "http://www.movescount.com/*",
