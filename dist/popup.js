@@ -36395,6 +36395,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * MoveRowItem
+ * http://www.movescount.com/Move/ExportRoute/2993249?format=0 (kml)
+ http://www.movescount.com/Move/ExportRoute/2993249?format=1 (gpx)
  */
 var activityTypeId = {
   running: 3,
@@ -36431,7 +36433,7 @@ var MoveRowItem = exports.MoveRowItem = function (_Component) {
           break;
         default:
       }
-      var url = 'http://www.movescount.com/move/export?id=' + s.MoveID + '&format=gpx';
+      var url = 'http://www.movescount.com/move/export?id=' + s.MoveID + '&format=tcx';
       return _react2.default.createElement(
         'div',
         { className: 'move-row-item' },

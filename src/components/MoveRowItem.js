@@ -3,6 +3,8 @@ import React, { Component, PropTypes } from 'react';
 import '../styles/moverowitem.css';
 /**
  * MoveRowItem
+ * http://www.movescount.com/Move/ExportRoute/2993249?format=0 (kml)
+ http://www.movescount.com/Move/ExportRoute/2993249?format=1 (gpx)
  */
 const activityTypeId = {
   running: 3,
@@ -29,7 +31,7 @@ export class MoveRowItem extends Component {
         break;
       default:
     }
-    const url = `http://www.movescount.com/move/export?id=${s.MoveID}&format=gpx`;
+    const url = `http://www.movescount.com/move/export?id=${s.MoveID}&format=tcx`;
     return (
       <div className={'move-row-item'}>
         <a
