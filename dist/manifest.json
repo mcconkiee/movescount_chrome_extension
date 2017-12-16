@@ -23,11 +23,12 @@
     "notifications",
     "tabs",
     "http://www.movescount.com/*",
+    "https://api.nike.com/*",
     "activeTab"
   ],
   "content_scripts": [
     {
-      "matches": ["http://www.movescount.com/*"],
+      "matches": ["http://www.movescount.com/*", "https://api.nike.com/*"],
       "js": ["modifyhtml.js"]
     }
   ]

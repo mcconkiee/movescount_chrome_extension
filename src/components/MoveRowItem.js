@@ -36,7 +36,7 @@ export class MoveRowItem extends Component {
       <div className={'move-row-item'}>
         <a
           onClick={e => {
-            console.log(s);
+            console.log(s, url);
             chrome.downloads.download({
               url: url,
               filename: `${s.MoveID}.gpx` // Optional
