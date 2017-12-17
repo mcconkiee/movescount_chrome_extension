@@ -6,18 +6,16 @@
 #root {
   width: 450px;
 }
-.App {
-  text-align: center;
+.full-width {
+  width: 100% !important;
 }
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+pre {
+  height: 150px;
+  white-space: pre-wrap;
 }
 
 .App-header {
   background-color: #222;
-  height: 150px;
   padding: 20px;
   color: white;
 }
@@ -37,13 +35,6 @@
   to {
     transform: rotate(360deg);
   }
-}
-.row-title {
-  display: flex;
-  flex-direction: row;
-}
-.row-title span {
-  margin-left: 10px;
 }
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)

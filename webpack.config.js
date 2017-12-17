@@ -8,6 +8,7 @@ module.exports = {
   // Entry files for our popup and background pages
   entry: {
     popup: './src/js/popup.js',
+    options: './src/js/options.js',
     background: './src/js/background.js',
     modifyhtml: './src/modifyhtml.js'
   },
@@ -60,6 +61,12 @@ module.exports = {
       chunks: ['popup'],
       filename: 'popup.html',
       template: './src/popup.html'
+    }),
+    new HtmlWebpackPlugin({
+      inject: true,
+      chunks: ['options'],
+      filename: 'options.html',
+      template: './src/options.html'
     }),
     // copy extension manifest and icons
     new CopyWebpackPlugin([

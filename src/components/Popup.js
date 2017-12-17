@@ -13,6 +13,11 @@ const paginate = function paginate(array, page_size, page_number) {
   return array.slice(page_number * page_size, (page_number + 1) * page_size);
 };
 
+const FILTER = {
+  MOVES: 'MOVES',
+  ROUTES: 'ROUTES'
+};
+
 class Popup extends Component {
   constructor(props) {
     super(props);
@@ -33,7 +38,7 @@ class Popup extends Component {
       { name: 'MovesCountCookie', url: 'http://www.movescount.com' },
       cookie => {
         console.log(cookie, 'coookie');
-        self.setState({ cookie: cookie, loading: false });
+        self.setState({ cookie: cookie, loading: false, filter: FILTER.MOVES });
         self.fetchData();
       }
     );
@@ -44,22 +49,56 @@ class Popup extends Component {
       <div className="App">
         <header className="App-header">
           <h1 className="App-title">Movescount Summary</h1>
-          {!this.state.cookie ? (
-            <div>
-              <h3>Please log into your Movescount account</h3>
-            </div>
-          ) : null}
-          {this.state.loading ? (
-            <div>
-              <h3>loading...</h3>
-            </div>
-          ) : null}
         </header>
-        {this.viewForData()}
+        {!this.state.cookie ? (
+          <div>
+            <h3>Please log into your Movescount account</h3>
+          </div>
+        ) : null}
+        {this.state.loading ? (
+          <div>
+            <h3>loading...</h3>
+          </div>
+        ) : (
+          <div className="container">
+            {this.filterView()}
+            {this.viewForData()}
+          </div>
+        )}
       </div>
     );
   }
-
+  filterView() {
+    const self = this;
+    return (
+      <div className="btn-group">
+        <a
+          href="#"
+          className={`btn btn-outline-secondary ${this.state.filter ===
+          FILTER.MOVES
+            ? 'active'
+            : null}`}
+          onClick={e => {
+            self.setState({ filter: FILTER.MOVES });
+          }}
+        >
+          Moves
+        </a>
+        <a
+          href="#"
+          className={`btn btn-outline-secondary ${this.state.filter ===
+          FILTER.ROUTES
+            ? 'active'
+            : null}`}
+          onClick={e => {
+            self.setState({ filter: FILTER.ROUTES });
+          }}
+        >
+          Routes
+        </a>
+      </div>
+    );
+  }
   viewForData() {
     return (this.state.moves.length > 0 ? (
       this.listData()
@@ -73,8 +112,14 @@ class Popup extends Component {
     const sample = paginate(this.state.moves, MAX_NUM, this.state.page);
     console.log(sample, 'page', this.state.page);
     return (
-      <div className="container">
-        <ul>{sample.map(s => <MoveRowItem key={s.MoveID} move={s} />)}</ul>
+      <div>
+        <ul className="list-group">
+          {sample.map(s => (
+            <li key={s.MoveID} className="list-group-item">
+              <MoveRowItem move={s} />
+            </li>
+          ))}
+        </ul>
         {this.state.page > 1 ? (
           <a
             className="btn btn-default"
