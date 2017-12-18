@@ -1,3 +1,4 @@
+import ConverUnits from 'convert-units';
 import moment from 'moment';
 import React, { Component, PropTypes } from 'react';
 import '../styles/moverowitem.scss';
@@ -13,6 +14,11 @@ export class RouteRowItem extends Component {
   render() {
     const s = this.props.route;
     const url = '#';
+    let distance = ConverUnits(s.Distance)
+      .from('m')
+      .to('mi');
+    distance = Math.round(distance).toFixed(2);
+    let suffix = 'miles';
     return (
       <div className={'move-row-item'}>
         <a
@@ -27,7 +33,8 @@ export class RouteRowItem extends Component {
           <div className="row-title">
             <i className={`icon-${s.ActivityID} row-item-icon`} />
             <span className={`icon-${s.ActivityID} icon-text`}>
-              {s.Name} / {s.Distance}
+              {s.Name} / {distance}
+              {suffix}
             </span>
           </div>
         </a>

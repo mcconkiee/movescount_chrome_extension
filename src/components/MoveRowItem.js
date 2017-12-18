@@ -1,3 +1,4 @@
+import ConvertUnits from 'convert-units';
 import moment from 'moment';
 import React, { Component, PropTypes } from 'react';
 import '../styles/moverowitem.scss';
@@ -18,8 +19,12 @@ export class MoveRowItem extends Component {
 
   render() {
     const s = this.props.move;
-
     const url = `http://www.movescount.com/move/export?id=${s.MoveID}&format=tcx`;
+    let distance = ConvertUnits(s.Distance)
+      .from('m')
+      .to('mi');
+    distance = Math.round(distance).toFixed(2);
+    let suffix = ' miles';
     return (
       <div className={'move-row-item'}>
         <a
@@ -35,7 +40,8 @@ export class MoveRowItem extends Component {
           <div className="row-title">
             <i className={`icon-${s.ActivityID} row-item-icon`} />
             <span className={`icon-${s.ActivityID} icon-text`}>
-              {moment(s.StartTime).format('MMM DD, YYYY')} / {s.Distance}
+              {moment(s.StartTime).format('MMM DD, YYYY')} / {distance}
+              {suffix}
             </span>
           </div>
         </a>

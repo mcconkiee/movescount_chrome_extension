@@ -8,11 +8,17 @@ import '../styles/theme.css';
 import '../styles/suunto.css';
 
 let instance = null;
+
+const UNITS = {
+  IMPERIAL: 'imperial',
+  METRIC: 'metric'
+};
+
 export class Options extends Component {
   constructor(props) {
     super(props);
     instance = this;
-    this.state = { cooke: null };
+    this.state = { cooke: null, units: UNITS.IMPERIAL };
   }
   componentWillMount() {
     ChromeHelper.cookie().then(cookie => {
