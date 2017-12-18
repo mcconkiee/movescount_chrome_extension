@@ -1,4 +1,6 @@
+import ApiHelper from '../js/ApiHelper';
 import axios from 'axios';
+import ChromeHelper from '../js/chrome-helpers';
 import ff from 'ff';
 import MoveRowItem from './MoveRowItem';
 import React, { Component } from 'react';
@@ -7,6 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import '../styles/index.css';
 import '../styles/theme.css';
+import '../styles/moverowitem.css';
 const MAX_NUM = 100;
 const paginate = function paginate(array, page_size, page_number) {
   --page_number; // because pages logically start with 1, but technically with 0
@@ -15,7 +18,8 @@ const paginate = function paginate(array, page_size, page_number) {
 
 const FILTER = {
   MOVES: 'MOVES',
-  ROUTES: 'ROUTES'
+  ROUTES: 'ROUTES',
+  MAP: 'MAP'
 };
 
 class Popup extends Component {
@@ -34,21 +38,25 @@ class Popup extends Component {
   }
   testAuth() {
     const self = this;
-    chrome.cookies.get(
-      { name: 'MovesCountCookie', url: 'http://www.movescount.com' },
-      cookie => {
+    ChromeHelper.cookie()
+      .then(cookie => {
         console.log(cookie, 'coookie');
         self.setState({ cookie: cookie, loading: false, filter: FILTER.MOVES });
         self.fetchData();
-      }
-    );
+      })
+      .catch(error => {
+        self.setState({ error: error, loading: false });
+      });
   }
 
   render() {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Movescount Summary</h1>
+          <h1 className="App-title">
+            <i className="icon-4" />
+            Movescount Summary
+          </h1>
         </header>
         {!this.state.cookie ? (
           <div>
@@ -95,6 +103,18 @@ class Popup extends Component {
           }}
         >
           Routes
+        </a>
+        <a
+          href="#"
+          className={`btn btn-outline-secondary ${this.state.filter ===
+          FILTER.MAP
+            ? 'active'
+            : null}`}
+          onClick={e => {
+            self.setState({ filter: FILTER.MAP });
+          }}
+        >
+          Map
         </a>
       </div>
     );
@@ -150,11 +170,9 @@ class Popup extends Component {
   }
   fetchData() {
     const self = this;
-    axios
-      .get('http://www.movescount.com/Move/MoveList')
+    ApiHelper.fetch('http://www.movescount.com/Move/MoveList')
       .then(response => {
-        console.log(response);
-        const json = response.data;
+        const json = response;
         const keys = Object.keys(json.Schema);
         const data = json.Data; //array of arrays , each 52 big
         let objects = [];
@@ -170,8 +188,17 @@ class Popup extends Component {
       })
       .catch(error => {
         self.setState({ error: error, coookie: null });
-        console.log(error);
       });
+    // axios
+    //   .get('http://www.movescount.com/Move/MoveList')
+    //   .then(response => {
+    //     console.log(response);
+    //
+    //   })
+    //   .catch(error => {
+    //
+    //     console.log(error);
+    //   });
   }
 }
 

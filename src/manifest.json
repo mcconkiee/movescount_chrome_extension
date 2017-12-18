@@ -15,6 +15,7 @@
     "48": "assets/icon48.png",
     "128": "assets/icon128.png"
   },
+  "web_accessible_resources": ["fonts/*.woff2", "fonts/*.woff"],
   "permissions": [
     "clipboardRead",
     "clipboardWrite",
@@ -24,12 +25,11 @@
     "notifications",
     "tabs",
     "http://www.movescount.com/*",
-    "https://api.nike.com/*",
     "activeTab"
   ],
   "content_scripts": [
     {
-      "matches": ["http://www.movescount.com/*", "https://api.nike.com/*"],
+      "matches": ["http://www.movescount.com/*"],
       "js": ["modifyhtml.js"]
     }
   ]

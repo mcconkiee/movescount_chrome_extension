@@ -33,9 +33,14 @@ module.exports = {
           use: 'css-loader'
         })
       },
+      // {
+      //   test: /\.(ico|eot|otf|webp|ttf|woff|woff2)(\?.*)?$/,
+      //   use: 'file-loader?limit=100000'
+      // },
       {
         test: /\.(ico|eot|otf|webp|ttf|woff|woff2)(\?.*)?$/,
-        use: 'file-loader?limit=100000'
+        loader:
+          'file-loader?mimetype=application/font-woff&name=fonts/[name].[ext]'
       },
       {
         test: /\.(jpe?g|png|gif|svg)$/i,

@@ -6,6 +6,9 @@ body {
 #root {
   width: 450px;
 }
+i {
+  font-style: normal;
+}
 .full-width {
   width: 100% !important;
 }

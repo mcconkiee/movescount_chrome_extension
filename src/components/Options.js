@@ -5,6 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import '../styles/index.css';
 import '../styles/theme.css';
+import '../styles/suunto.css';
+
 let instance = null;
 export class Options extends Component {
   constructor(props) {
@@ -29,6 +31,9 @@ export class Options extends Component {
               <h1>Cookie Info</h1>
             </div>
           </header>
+          <div>
+            <i className="icon-4" />
+          </div>
           <pre>
             {this.state.cookie
               ? JSON.stringify(this.state.cookie)

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React, { Component, PropTypes } from 'react';
-import '../styles/moverowitem.css';
+
 /**
  * MoveRowItem
  * http://www.movescount.com/Move/ExportRoute/2993249?format=0 (kml)
@@ -18,19 +18,7 @@ export class MoveRowItem extends Component {
 
   render() {
     const s = this.props.move;
-    let icon = 'grav';
-    switch (s.ActivityID) {
-      case 3: //run
-        icon = 'compass';
-        break;
-      case 4: //cycling
-        icon = 'bicycle';
-        break;
-      case 5: //cycling
-        icon = 'bicycle';
-        break;
-      default:
-    }
+
     const url = `http://www.movescount.com/move/export?id=${s.MoveID}&format=tcx`;
     return (
       <div className={'move-row-item'}>
@@ -45,7 +33,7 @@ export class MoveRowItem extends Component {
           href={url}
         >
           <div className="row-title">
-            <i className={`fa fa-2x fa-${icon}`} aria-hidden="true" />
+            <i className={`icon-${s.ActivityID} row-item-icon`} />
             <span>
               {moment(s.StartTime).format('MMM DD, YYYY')} / {s.Distance}
             </span>

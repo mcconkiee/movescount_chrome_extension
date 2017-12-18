@@ -1,7 +1,3 @@
-.row-title {
-  display: flex;
-  flex-direction: row;
-}
-.row-title span {
-  margin-left: 10px;
+.row-item-icon {
+  font-size: 35px !important;
 }
