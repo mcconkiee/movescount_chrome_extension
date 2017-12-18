@@ -15,6 +15,9 @@ i {
 .paginationUI {
   margin: 5px 0;
 }
+.main-content {
+  margin: 5px 0;
+}
 pre {
   height: 150px;
   white-space: pre-wrap;

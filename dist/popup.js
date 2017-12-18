@@ -35095,6 +35095,10 @@ var _react = __webpack_require__(4);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _RouteRowItem = __webpack_require__(212);
+
+var _RouteRowItem2 = _interopRequireDefault(_RouteRowItem);
+
 var _icon = __webpack_require__(189);
 
 var _icon2 = _interopRequireDefault(_icon);
@@ -35137,7 +35141,7 @@ var Popup = function (_Component) {
 
     _this.state = {
       cookie: null,
-      moves: [],
+      data: [],
       page: 1,
       pageContent: [],
       loading: true
@@ -35210,53 +35214,50 @@ var Popup = function (_Component) {
           ),
           _react2.default.createElement(
             'div',
-            null,
+            { className: 'main-content' },
             this.viewForData()
           )
         )
       );
     }
   }, {
-    key: 'filterView',
-    value: function filterView() {
-      var self = this;
+    key: 'movesUI',
+    value: function movesUI() {
+      var sample = paginate(this.state.data, MAX_NUM, this.state.page);
       return _react2.default.createElement(
         'div',
-        { className: 'btn-group' },
+        null,
         _react2.default.createElement(
-          'a',
-          {
-            href: '#',
-            className: 'btn btn-outline-secondary ' + (this.state.filter === FILTER.MOVES ? 'active' : null),
-            onClick: function onClick(e) {
-              self.setState({ filter: FILTER.MOVES });
-              self.fetchMoves();
-            }
-          },
-          'Moves'
-        ),
+          'ul',
+          { className: 'list-group' },
+          sample.map(function (s) {
+            return _react2.default.createElement(
+              'li',
+              { key: s.MoveID, className: 'list-group-item' },
+              _react2.default.createElement(_MoveRowItem2.default, { move: s })
+            );
+          })
+        )
+      );
+    }
+  }, {
+    key: 'routesUI',
+    value: function routesUI() {
+      var sample = paginate(this.state.data, MAX_NUM, this.state.page);
+      console.log(sample, 'routes');
+      return _react2.default.createElement(
+        'div',
+        null,
         _react2.default.createElement(
-          'a',
-          {
-            href: '#',
-            className: 'btn btn-outline-secondary ' + (this.state.filter === FILTER.ROUTES ? 'active' : null),
-            onClick: function onClick(e) {
-              self.setState({ filter: FILTER.ROUTES });
-              self.fetchRoutes();
-            }
-          },
-          'Routes'
-        ),
-        _react2.default.createElement(
-          'a',
-          {
-            href: '#',
-            className: 'btn btn-outline-secondary ' + (this.state.filter === FILTER.MAP ? 'active' : null),
-            onClick: function onClick(e) {
-              self.setState({ filter: FILTER.MAP });
-            }
-          },
-          'Map'
+          'ul',
+          { className: 'list-group' },
+          sample.map(function (s) {
+            return _react2.default.createElement(
+              'li',
+              { key: s.RouteID, className: 'list-group-item' },
+              _react2.default.createElement(_RouteRowItem2.default, { route: s })
+            );
+          })
         )
       );
     }
@@ -35298,38 +35299,91 @@ var Popup = function (_Component) {
       );
     }
   }, {
+    key: 'updateFilterState',
+    value: function updateFilterState(filter) {
+      this.setState({ filter: filter, page: 1, data: [] });
+      switch (filter) {
+        case FILTER.MOVES:
+          this.fetchMoves();
+          break;
+        case FILTER.ROUTES:
+          this.fetchRoutes();
+          break;
+        default:
+          console.log('Unsupported filter action', filter);
+      }
+    }
+  }, {
+    key: 'filterView',
+    value: function filterView() {
+      var self = this;
+      return _react2.default.createElement(
+        'div',
+        { className: 'btn-group' },
+        _react2.default.createElement(
+          'a',
+          {
+            href: '#',
+            className: 'btn btn-outline-secondary ' + (this.state.filter === FILTER.MOVES ? 'active' : null),
+            onClick: function onClick(e) {
+              self.updateFilterState(FILTER.MOVES);
+            }
+          },
+          'Moves'
+        ),
+        _react2.default.createElement(
+          'a',
+          {
+            href: '#',
+            className: 'btn btn-outline-secondary ' + (this.state.filter === FILTER.ROUTES ? 'active' : null),
+            onClick: function onClick(e) {
+              self.updateFilterState(FILTER.ROUTES);
+            }
+          },
+          'Routes'
+        ),
+        _react2.default.createElement(
+          'a',
+          {
+            href: '#',
+            className: 'btn btn-outline-secondary ' + (this.state.filter === FILTER.MAP ? 'active' : null),
+            onClick: function onClick(e) {
+              self.updateFilterState(FILTER.MAP);
+            }
+          },
+          'Map'
+        )
+      );
+    }
+  }, {
     key: 'viewForData',
     value: function viewForData() {
-      return this.state.moves.length > 0 ? this.listData() : _react2.default.createElement(
+      return this.state.data.length > 0 ? this.listMovesData() : _react2.default.createElement(
         'div',
         null,
         _react2.default.createElement(
           'p',
           null,
-          'No moves found'
+          'No data found'
         )
       );
     }
   }, {
-    key: 'listData',
-    value: function listData() {
-      var sample = paginate(this.state.moves, MAX_NUM, this.state.page);
-      console.log(sample, 'page', this.state.page);
-      return _react2.default.createElement(
-        'div',
-        null,
-        _react2.default.createElement(
-          'ul',
-          { className: 'list-group' },
-          sample.map(function (s) {
-            return _react2.default.createElement(
-              'li',
-              { key: s.MoveID, className: 'list-group-item' },
-              _react2.default.createElement(_MoveRowItem2.default, { move: s })
-            );
-          })
-        )
-      );
+    key: 'listMovesData',
+    value: function listMovesData() {
+      switch (this.state.filter) {
+        case FILTER.MOVES:
+          return this.movesUI();
+          break;
+        case FILTER.ROUTES:
+          return this.routesUI();
+        default:
+          return _react2.default.createElement(
+            'div',
+            null,
+            'Unsupported View'
+          );
+      }
     }
   }, {
     key: 'fetchMoves',
@@ -35348,8 +35402,7 @@ var Popup = function (_Component) {
           });
           objects.push(pojo);
         });
-        console.log(objects);
-        self.setState({ moves: objects, loading: false });
+        self.setState({ data: objects, loading: false });
       }).catch(function (error) {
         self.setState({ error: error, coookie: null });
       });
@@ -35360,7 +35413,7 @@ var Popup = function (_Component) {
       var self = this;
       _ApiHelper2.default.fetch('http://www.movescount.com/api/routes/private').then(function (response) {
         var json = response;
-        console.log(json);
+        self.setState({ data: json, loading: false });
         // const keys = Object.keys(json.Schema);
         // const data = json.Data; //array of arrays , each 52 big
         // let objects = [];
@@ -35372,7 +35425,7 @@ var Popup = function (_Component) {
         //   objects.push(pojo);
         // });
         // console.log(objects);
-        // self.setState({ moves: objects, loading: false });
+        // self.setState({ data: objects, loading: false });
       }).catch(function (error) {
         self.setState({ error: error, coookie: null });
       });
@@ -37784,6 +37837,116 @@ module.exports = function (css) {
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = __webpack_require__.p + "8e77eba4c202d9d8f0a1f36c7170764a.png";
+
+/***/ }),
+/* 190 */,
+/* 191 */,
+/* 192 */,
+/* 193 */,
+/* 194 */,
+/* 195 */,
+/* 196 */,
+/* 197 */,
+/* 198 */,
+/* 199 */,
+/* 200 */,
+/* 201 */,
+/* 202 */,
+/* 203 */,
+/* 204 */,
+/* 205 */,
+/* 206 */,
+/* 207 */,
+/* 208 */,
+/* 209 */,
+/* 210 */,
+/* 211 */,
+/* 212 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.RouteRowItem = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _moment = __webpack_require__(0);
+
+var _moment2 = _interopRequireDefault(_moment);
+
+var _react = __webpack_require__(4);
+
+var _react2 = _interopRequireDefault(_react);
+
+__webpack_require__(184);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * RouteRowItem
+ */
+var RouteRowItem = exports.RouteRowItem = function (_Component) {
+  _inherits(RouteRowItem, _Component);
+
+  function RouteRowItem(props) {
+    _classCallCheck(this, RouteRowItem);
+
+    var _this = _possibleConstructorReturn(this, (RouteRowItem.__proto__ || Object.getPrototypeOf(RouteRowItem)).call(this, props));
+
+    console.log('row item ', props);
+    return _this;
+  }
+
+  _createClass(RouteRowItem, [{
+    key: 'render',
+    value: function render() {
+      var s = this.props.route;
+      var url = '#';
+      return _react2.default.createElement(
+        'div',
+        { className: 'move-row-item' },
+        _react2.default.createElement(
+          'a',
+          {
+            onClick: function onClick(e) {
+              // chrome.downloads.download({
+              //   url: url,
+              //   filename: `${s.MoveID}.gpx` // Optional
+              // });
+            },
+            href: url
+          },
+          _react2.default.createElement(
+            'div',
+            { className: 'row-title' },
+            _react2.default.createElement('i', { className: 'icon-' + s.ActivityID + ' row-item-icon' }),
+            _react2.default.createElement(
+              'span',
+              { className: 'icon-' + s.ActivityID + ' icon-text' },
+              s.Name,
+              ' / ',
+              s.Distance
+            )
+          )
+        )
+      );
+    }
+  }]);
+
+  return RouteRowItem;
+}(_react.Component);
+
+exports.default = RouteRowItem;
 
 /***/ })
 /******/ ]);

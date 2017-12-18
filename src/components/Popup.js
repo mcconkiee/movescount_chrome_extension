@@ -4,6 +4,7 @@ import ChromeHelper from '../js/chrome-helpers';
 import ff from 'ff';
 import MoveRowItem from './MoveRowItem';
 import React, { Component } from 'react';
+import RouteRowItem from './RouteRowItem';
 import icon from '../assets/icon128.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
@@ -27,7 +28,7 @@ class Popup extends Component {
     super(props);
     this.state = {
       cookie: null,
-      moves: [],
+      data: [],
       page: 1,
       pageContent: [],
       loading: true
@@ -48,7 +49,6 @@ class Popup extends Component {
         self.setState({ error: error, loading: false });
       });
   }
-
   render() {
     return (
       <div className="App">
@@ -71,54 +71,38 @@ class Popup extends Component {
           <div className="container">
             <div>{this.filterView()}</div>
             <div>{this.paginationUI()}</div>
-            <div>{this.viewForData()}</div>
+            <div className="main-content">{this.viewForData()}</div>
           </div>
         )}
       </div>
     );
   }
-  filterView() {
-    const self = this;
+  movesUI() {
+    const sample = paginate(this.state.data, MAX_NUM, this.state.page);
     return (
-      <div className="btn-group">
-        <a
-          href="#"
-          className={`btn btn-outline-secondary ${this.state.filter ===
-          FILTER.MOVES
-            ? 'active'
-            : null}`}
-          onClick={e => {
-            self.setState({ filter: FILTER.MOVES });
-            self.fetchMoves();
-          }}
-        >
-          Moves
-        </a>
-        <a
-          href="#"
-          className={`btn btn-outline-secondary ${this.state.filter ===
-          FILTER.ROUTES
-            ? 'active'
-            : null}`}
-          onClick={e => {
-            self.setState({ filter: FILTER.ROUTES });
-            self.fetchRoutes();
-          }}
-        >
-          Routes
-        </a>
-        <a
-          href="#"
-          className={`btn btn-outline-secondary ${this.state.filter ===
-          FILTER.MAP
-            ? 'active'
-            : null}`}
-          onClick={e => {
-            self.setState({ filter: FILTER.MAP });
-          }}
-        >
-          Map
-        </a>
+      <div>
+        <ul className="list-group">
+          {sample.map(s => (
+            <li key={s.MoveID} className="list-group-item">
+              <MoveRowItem move={s} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+  routesUI() {
+    const sample = paginate(this.state.data, MAX_NUM, this.state.page);
+    console.log(sample, 'routes');
+    return (
+      <div>
+        <ul className="list-group">
+          {sample.map(s => (
+            <li key={s.RouteID} className="list-group-item">
+              <RouteRowItem route={s} />
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }
@@ -152,29 +136,81 @@ class Popup extends Component {
       </div>
     );
   }
+  updateFilterState(filter) {
+    this.setState({ filter: filter, page: 1, data: [] });
+    switch (filter) {
+      case FILTER.MOVES:
+        this.fetchMoves();
+        break;
+      case FILTER.ROUTES:
+        this.fetchRoutes();
+        break;
+      default:
+        console.log('Unsupported filter action', filter);
+    }
+  }
+  filterView() {
+    const self = this;
+    return (
+      <div className="btn-group">
+        <a
+          href="#"
+          className={`btn btn-outline-secondary ${this.state.filter ===
+          FILTER.MOVES
+            ? 'active'
+            : null}`}
+          onClick={e => {
+            self.updateFilterState(FILTER.MOVES);
+          }}
+        >
+          Moves
+        </a>
+        <a
+          href="#"
+          className={`btn btn-outline-secondary ${this.state.filter ===
+          FILTER.ROUTES
+            ? 'active'
+            : null}`}
+          onClick={e => {
+            self.updateFilterState(FILTER.ROUTES);
+          }}
+        >
+          Routes
+        </a>
+        <a
+          href="#"
+          className={`btn btn-outline-secondary ${this.state.filter ===
+          FILTER.MAP
+            ? 'active'
+            : null}`}
+          onClick={e => {
+            self.updateFilterState(FILTER.MAP);
+          }}
+        >
+          Map
+        </a>
+      </div>
+    );
+  }
   viewForData() {
-    return (this.state.moves.length > 0 ? (
-      this.listData()
+    return (this.state.data.length > 0 ? (
+      this.listMovesData()
     ) : (
       <div>
-        <p>No moves found</p>
+        <p>No data found</p>
       </div>
     ): null);
   }
-  listData() {
-    const sample = paginate(this.state.moves, MAX_NUM, this.state.page);
-    console.log(sample, 'page', this.state.page);
-    return (
-      <div>
-        <ul className="list-group">
-          {sample.map(s => (
-            <li key={s.MoveID} className="list-group-item">
-              <MoveRowItem move={s} />
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
+  listMovesData() {
+    switch (this.state.filter) {
+      case FILTER.MOVES:
+        return this.movesUI();
+        break;
+      case FILTER.ROUTES:
+        return this.routesUI();
+      default:
+        return <div>Unsupported View</div>;
+    }
   }
   fetchMoves() {
     const self = this;
@@ -192,8 +228,7 @@ class Popup extends Component {
           });
           objects.push(pojo);
         });
-        console.log(objects);
-        self.setState({ moves: objects, loading: false });
+        self.setState({ data: objects, loading: false });
       })
       .catch(error => {
         self.setState({ error: error, coookie: null });
@@ -204,7 +239,7 @@ class Popup extends Component {
     ApiHelper.fetch('http://www.movescount.com/api/routes/private')
       .then(response => {
         const json = response;
-        console.log(json);
+        self.setState({ data: json, loading: false });
         // const keys = Object.keys(json.Schema);
         // const data = json.Data; //array of arrays , each 52 big
         // let objects = [];
@@ -216,7 +251,7 @@ class Popup extends Component {
         //   objects.push(pojo);
         // });
         // console.log(objects);
-        // self.setState({ moves: objects, loading: false });
+        // self.setState({ data: objects, loading: false });
       })
       .catch(error => {
         self.setState({ error: error, coookie: null });
