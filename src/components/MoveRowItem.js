@@ -1,6 +1,6 @@
 import moment from 'moment';
 import React, { Component, PropTypes } from 'react';
-
+import '../styles/moverowitem.scss';
 /**
  * MoveRowItem
  * http://www.movescount.com/Move/ExportRoute/2993249?format=0 (kml)
@@ -34,7 +34,7 @@ export class MoveRowItem extends Component {
         >
           <div className="row-title">
             <i className={`icon-${s.ActivityID} row-item-icon`} />
-            <span>
+            <span className={`icon-${s.ActivityID} icon-text`}>
               {moment(s.StartTime).format('MMM DD, YYYY')} / {s.Distance}
             </span>
           </div>

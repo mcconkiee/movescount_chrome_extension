@@ -12,6 +12,9 @@ i {
 .full-width {
   width: 100% !important;
 }
+.paginationUI {
+  margin: 5px 0;
+}
 pre {
   height: 150px;
   white-space: pre-wrap;

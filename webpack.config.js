@@ -20,7 +20,6 @@ module.exports = {
   // Here we define loaders for different file types
   module: {
     rules: [
-      // We use Babel to transpile JSX
       {
         test: /\.js$/,
         include: [path.resolve(__dirname, './src')],
@@ -33,10 +32,10 @@ module.exports = {
           use: 'css-loader'
         })
       },
-      // {
-      //   test: /\.(ico|eot|otf|webp|ttf|woff|woff2)(\?.*)?$/,
-      //   use: 'file-loader?limit=100000'
-      // },
+      {
+        test: /\.scss$/,
+        loaders: ['style-loader', 'css-loader', 'sass-loader']
+      },
       {
         test: /\.(ico|eot|otf|webp|ttf|woff|woff2)(\?.*)?$/,
         loader:

@@ -9,7 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import '../styles/index.css';
 import '../styles/theme.css';
-import '../styles/moverowitem.css';
+
 const MAX_NUM = 100;
 const paginate = function paginate(array, page_size, page_number) {
   --page_number; // because pages logically start with 1, but technically with 0
@@ -42,7 +42,7 @@ class Popup extends Component {
       .then(cookie => {
         console.log(cookie, 'coookie');
         self.setState({ cookie: cookie, loading: false, filter: FILTER.MOVES });
-        self.fetchData();
+        self.fetchMoves();
       })
       .catch(error => {
         self.setState({ error: error, loading: false });
@@ -69,8 +69,9 @@ class Popup extends Component {
           </div>
         ) : (
           <div className="container">
-            {this.filterView()}
-            {this.viewForData()}
+            <div>{this.filterView()}</div>
+            <div>{this.paginationUI()}</div>
+            <div>{this.viewForData()}</div>
           </div>
         )}
       </div>
@@ -88,6 +89,7 @@ class Popup extends Component {
             : null}`}
           onClick={e => {
             self.setState({ filter: FILTER.MOVES });
+            self.fetchMoves();
           }}
         >
           Moves
@@ -100,6 +102,7 @@ class Popup extends Component {
             : null}`}
           onClick={e => {
             self.setState({ filter: FILTER.ROUTES });
+            self.fetchRoutes();
           }}
         >
           Routes
@@ -115,6 +118,36 @@ class Popup extends Component {
           }}
         >
           Map
+        </a>
+      </div>
+    );
+  }
+  paginationUI() {
+    return (
+      <div className="btn-group paginationUI">
+        <a
+          className="btn btn-outline-primary"
+          href="#"
+          onClick={e => {
+            let page = this.state.page;
+            page--;
+            this.setState({ page: page });
+          }}
+        >
+          prev
+        </a>
+
+        <a
+          className="btn btn-outline-primary"
+          href="#"
+          onClick={e => {
+            let page = this.state.page;
+            page++;
+            console.log(page, 'next');
+            this.setState({ page: page });
+          }}
+        >
+          next
         </a>
       </div>
     );
@@ -140,36 +173,12 @@ class Popup extends Component {
             </li>
           ))}
         </ul>
-        {this.state.page > 1 ? (
-          <a
-            className="btn btn-default"
-            href="#"
-            onClick={e => {
-              let page = this.state.page;
-              page--;
-              this.setState({ page: page });
-            }}
-          >
-            prev
-          </a>
-        ) : null}
-        <a
-          className="btn btn-default"
-          href="#"
-          onClick={e => {
-            let page = this.state.page;
-            page++;
-            console.log(page, 'next');
-            this.setState({ page: page });
-          }}
-        >
-          next
-        </a>
       </div>
     );
   }
-  fetchData() {
+  fetchMoves() {
     const self = this;
+    console.log('fetchMoves');
     ApiHelper.fetch('http://www.movescount.com/Move/MoveList')
       .then(response => {
         const json = response;
@@ -189,16 +198,29 @@ class Popup extends Component {
       .catch(error => {
         self.setState({ error: error, coookie: null });
       });
-    // axios
-    //   .get('http://www.movescount.com/Move/MoveList')
-    //   .then(response => {
-    //     console.log(response);
-    //
-    //   })
-    //   .catch(error => {
-    //
-    //     console.log(error);
-    //   });
+  }
+  fetchRoutes() {
+    const self = this;
+    ApiHelper.fetch('http://www.movescount.com/api/routes/private')
+      .then(response => {
+        const json = response;
+        console.log(json);
+        // const keys = Object.keys(json.Schema);
+        // const data = json.Data; //array of arrays , each 52 big
+        // let objects = [];
+        // data.forEach(dataObject => {
+        //   let pojo = {};
+        //   dataObject.forEach((dataValue, idx) => {
+        //     pojo[keys[idx]] = dataValue;
+        //   });
+        //   objects.push(pojo);
+        // });
+        // console.log(objects);
+        // self.setState({ moves: objects, loading: false });
+      })
+      .catch(error => {
+        self.setState({ error: error, coookie: null });
+      });
   }
 }
 

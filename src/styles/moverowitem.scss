@@ -1,0 +1,23 @@
+.move-row-item {
+  justify-content: 'center';
+  align-items: 'center';
+  .row-title {
+    display: flex;
+    align-items: center;
+    .row-item-icon {
+      font-size: 20px;
+      margin-right: 5px;
+    }
+    span {
+      &.icon-text {
+        font-size: 14px;
+        font-family: inherit;
+        font-style: normal;
+      }
+      &.icon-text::before,
+      &.icon-text::after {
+        content: none;
+      }
+    }
+  }
+}
