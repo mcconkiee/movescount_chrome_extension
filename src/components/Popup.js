@@ -3,6 +3,7 @@ import axios from 'axios';
 import ChromeHelper from '../js/chrome-helpers';
 import ff from 'ff';
 import MoveRowItem from './MoveRowItem';
+import MovesMap from './MovesMap';
 import React, { Component } from 'react';
 import RouteRowItem from './RouteRowItem';
 import icon from '../assets/icon128.png';
@@ -102,6 +103,10 @@ class Popup extends Component {
       </div>
     );
   }
+  mapUI() {
+    console.log('do map');
+    return <MovesMap />;
+  }
   paginationUI() {
     return (
       <div className="btn-group paginationUI">
@@ -140,6 +145,9 @@ class Popup extends Component {
         break;
       case FILTER.ROUTES:
         this.fetchRoutes();
+        break;
+      case FILTER.MAP:
+        this.fetchMapData();
         break;
       default:
         console.log('Unsupported filter action', filter);
@@ -189,6 +197,9 @@ class Popup extends Component {
     );
   }
   viewForData() {
+    if (this.state.filter === FILTER.MAP) {
+      return this.mapUI();
+    }
     return (this.state.data.length > 0 ? (
       this.listMovesData()
     ) : (
@@ -236,22 +247,13 @@ class Popup extends Component {
       .then(response => {
         const json = response;
         self.setState({ data: json, loading: false });
-        // const keys = Object.keys(json.Schema);
-        // const data = json.Data; //array of arrays , each 52 big
-        // let objects = [];
-        // data.forEach(dataObject => {
-        //   let pojo = {};
-        //   dataObject.forEach((dataValue, idx) => {
-        //     pojo[keys[idx]] = dataValue;
-        //   });
-        //   objects.push(pojo);
-        // });
-        // console.log(objects);
-        // self.setState({ data: objects, loading: false });
       })
       .catch(error => {
         self.setState({ error: error, coookie: null });
       });
+  }
+  fetchMapData() {
+    this.setState({ data: [] });
   }
 }
 
