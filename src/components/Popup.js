@@ -53,10 +53,7 @@ class Popup extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">
-            <i className="icon-4" />
-            Movescount Summary
-          </h1>
+          <h1 className="App-title">Movescount Summary</h1>
         </header>
         {!this.state.cookie ? (
           <div>
@@ -93,7 +90,6 @@ class Popup extends Component {
   }
   routesUI() {
     const sample = paginate(this.state.data, MAX_NUM, this.state.page);
-    console.log(sample, 'routes');
     return (
       <div>
         <ul className="list-group">

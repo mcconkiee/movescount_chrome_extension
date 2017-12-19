@@ -19,7 +19,7 @@ export class MoveRowItem extends Component {
 
   render() {
     const s = this.props.move;
-    const url = `http://www.movescount.com/move/export?id=${s.MoveID}&format=tcx`;
+    const url = `http://www.movescount.com/move/export?id=${s.MoveID}&format=gpx`;
     let distance = ConvertUnits(s.Distance)
       .from('m')
       .to('mi');
