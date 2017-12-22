@@ -15,7 +15,8 @@
     "48": "assets/icon48.png",
     "128": "assets/icon128.png"
   },
-  "web_accessible_resources": ["fonts/*.woff2", "fonts/*.woff"],
+
+  "web_accessible_resources": ["fonts/*.woff2", "fonts/*.woff", "css/*.css"],
   "permissions": [
     "clipboardRead",
     "clipboardWrite",

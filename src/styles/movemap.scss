@@ -1,5 +1,11 @@
 #map {
   height: 350px;
   width: 100%;
-  background-color: 'green';
+  background-color: green;
+  .leaflet-container {
+    height: 100%;
+  }
+  #map-container {
+    height: inherit;
+  }
 }

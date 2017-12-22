@@ -1,27 +1,30 @@
-import ApiHelper from '../js/ApiHelper';
-import axios from 'axios';
-import ChromeHelper from '../js/chrome-helpers';
-import ff from 'ff';
-import MoveRowItem from './MoveRowItem';
-import MovesMap from './MovesMap';
 import React, { Component } from 'react';
-import RouteRowItem from './RouteRowItem';
-import icon from '../assets/icon128.png';
+import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import '../styles/index.css';
 import '../styles/theme.css';
+import ApiHelper from '../js/ApiHelper';
+import ChromeHelper from '../js/chrome-helpers';
+import MoveRowItem from './MoveRowItem';
+import MovesMap from './MovesMap';
 
-const MAX_NUM = 100;
-const paginate = function paginate(array, page_size, page_number) {
-  --page_number; // because pages logically start with 1, but technically with 0
-  return array.slice(page_number * page_size, (page_number + 1) * page_size);
-};
+import reducers from '../redux/reducers';
+import RouteRowItem from './RouteRowItem';
 
 const FILTER = {
   MOVES: 'MOVES',
   ROUTES: 'ROUTES',
-  MAP: 'MAP'
+  MAP: 'MAP',
+};
+
+// PAGINATION
+// TODO - move to helper
+const MAX_NUM = 100;
+const paginate = function paginate(array, pageSize, pageNumber) {
+  let pageNum = pageNumber;
+  --pageNum; // because pages logically start with 1, but technically with 0
+  return array.slice(pageNum * pageSize, (pageNum + 1) * pageSize);
 };
 
 class Popup extends Component {
@@ -31,50 +34,25 @@ class Popup extends Component {
       cookie: null,
       data: [],
       page: 1,
-      pageContent: [],
-      loading: true
+      loading: true,
     };
   }
+
   componentWillMount() {
     this.testAuth();
   }
   testAuth() {
     const self = this;
     ChromeHelper.cookie()
-      .then(cookie => {
-        console.log(cookie, 'coookie');
-        self.setState({ cookie: cookie, loading: false, filter: FILTER.MOVES });
+      .then((cookie) => {
+        self.setState({ cookie, loading: false, filter: FILTER.MOVES });
         self.fetchMoves();
       })
-      .catch(error => {
-        self.setState({ error: error, loading: false });
+      .catch((error) => {
+        self.setState({ error, loading: false });
       });
   }
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Movescount Summary</h1>
-        </header>
-        {!this.state.cookie ? (
-          <div>
-            <h3>Please log into your Movescount account</h3>
-          </div>
-        ) : null}
-        {this.state.loading ? (
-          <div>
-            <h3>loading...</h3>
-          </div>
-        ) : (
-          <div className="container">
-            <div>{this.filterView()}</div>
-            <div>{this.paginationUI()}</div>
-            <div className="main-content">{this.viewForData()}</div>
-          </div>
-        )}
-      </div>
-    );
-  }
+
   movesUI() {
     const sample = paginate(this.state.data, MAX_NUM, this.state.page);
     return (
@@ -104,41 +82,37 @@ class Popup extends Component {
     );
   }
   mapUI() {
-    console.log('do map');
-    return <MovesMap />;
+    return <MovesMap data={this.props.gpx} />;
   }
   paginationUI() {
     return (
       <div className="btn-group paginationUI">
-        <a
+        <button
           className="btn btn-outline-primary"
-          href="#"
-          onClick={e => {
-            let page = this.state.page;
+          onClick={() => {
+            let { page } = this.state;
             page--;
-            this.setState({ page: page });
+            this.setState({ page });
           }}
         >
           prev
-        </a>
+        </button>
 
-        <a
+        <button
           className="btn btn-outline-primary"
-          href="#"
-          onClick={e => {
-            let page = this.state.page;
+          onClick={() => {
+            let { page } = this.state;
             page++;
-            console.log(page, 'next');
-            this.setState({ page: page });
+            this.setState({ page });
           }}
         >
           next
-        </a>
+        </button>
       </div>
     );
   }
   updateFilterState(filter) {
-    this.setState({ filter: filter, page: 1, data: [] });
+    this.setState({ filter, page: 1, data: [] });
     switch (filter) {
       case FILTER.MOVES:
         this.fetchMoves();
@@ -157,62 +131,45 @@ class Popup extends Component {
     const self = this;
     return (
       <div className="btn-group">
-        <a
-          href="#"
-          className={`btn btn-outline-secondary ${this.state.filter ===
-          FILTER.MOVES
-            ? 'active'
-            : null}`}
-          onClick={e => {
+        <button
+          className={`btn btn-outline-secondary ${
+            this.state.filter === FILTER.MOVES ? 'active' : null
+          }`}
+          onClick={() => {
             self.updateFilterState(FILTER.MOVES);
           }}
         >
           Moves
-        </a>
-        <a
-          href="#"
-          className={`btn btn-outline-secondary ${this.state.filter ===
-          FILTER.ROUTES
-            ? 'active'
-            : null}`}
-          onClick={e => {
+        </button>
+        <button
+          className={`btn btn-outline-secondary ${
+            this.state.filter === FILTER.ROUTES ? 'active' : null
+          }`}
+          onClick={() => {
             self.updateFilterState(FILTER.ROUTES);
           }}
         >
           Routes
-        </a>
-        <a
-          href="#"
-          className={`btn btn-outline-secondary ${this.state.filter ===
-          FILTER.MAP
-            ? 'active'
-            : null}`}
-          onClick={e => {
-            self.updateFilterState(FILTER.MAP);
-          }}
-        >
-          Map
-        </a>
+        </button>
       </div>
     );
   }
   viewForData() {
-    if (this.state.filter === FILTER.MAP) {
-      return this.mapUI();
-    }
-    return (this.state.data.length > 0 ? (
-      this.listMovesData()
+    return this.state.data.length > 0 ? (
+      <div>
+        {this.mapUI()}
+        {this.listMovesData()}
+      </div>
     ) : (
       <div>
         <p>No data found</p>
       </div>
-    ): null);
+    );
   }
   listMovesData() {
     switch (this.state.filter) {
       case FILTER.MOVES:
         return this.movesUI();
-        break;
       case FILTER.ROUTES:
         return this.routesUI();
       default:
@@ -221,15 +178,15 @@ class Popup extends Component {
   }
   fetchMoves() {
     const self = this;
-    console.log('fetchMoves');
+    this.setState({ loading: true });
     ApiHelper.fetch('http://www.movescount.com/Move/MoveList')
-      .then(response => {
+      .then((response) => {
         const json = response;
         const keys = Object.keys(json.Schema);
-        const data = json.Data; //array of arrays , each 52 big
-        let objects = [];
-        data.forEach(dataObject => {
-          let pojo = {};
+        const data = json.Data; // array of arrays , each 52 big
+        const objects = [];
+        data.forEach((dataObject) => {
+          const pojo = {};
           dataObject.forEach((dataValue, idx) => {
             pojo[keys[idx]] = dataValue;
           });
@@ -237,24 +194,50 @@ class Popup extends Component {
         });
         self.setState({ data: objects, loading: false });
       })
-      .catch(error => {
-        self.setState({ error: error, coookie: null });
+      .catch((error) => {
+        self.setState({ error, coookie: null, loading: false });
       });
   }
   fetchRoutes() {
     const self = this;
+    this.setState({ loading: true });
     ApiHelper.fetch('http://www.movescount.com/api/routes/private')
-      .then(response => {
+      .then((response) => {
         const json = response;
         self.setState({ data: json, loading: false });
       })
-      .catch(error => {
-        self.setState({ error: error, coookie: null });
+      .catch((error) => {
+        self.setState({ error, coookie: null, loading: false });
       });
   }
   fetchMapData() {
     this.setState({ data: [] });
   }
+  render() {
+    return (
+      <div className="App">
+        <header className="App-header">
+          <h1 className="App-title">Movescount Summary</h1>
+        </header>
+        {!this.state.cookie ? (
+          <div>
+            <h3>Please log into your Movescount account</h3>
+          </div>
+        ) : null}
+        {this.state.loading ? (
+          <div>
+            <h3>loading...</h3>
+          </div>
+        ) : (
+          <div className="container">
+            <div>{this.filterView()}</div>
+            <div>{this.paginationUI()}</div>
+            <div className="main-content">{this.viewForData()}</div>
+          </div>
+        )}
+      </div>
+    );
+  }
 }
-
+Popup = connect(reducers)(Popup);
 export default Popup;

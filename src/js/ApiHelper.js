@@ -1,17 +1,15 @@
 import axios from 'axios';
+
 class ApiHelper {
-  constructor() {}
   fetch(endpoint) {
     return new Promise((resolve, reject) => {
-      const self = this;
       axios
         .get(endpoint)
-        .then(response => {
-          console.log(response);
+        .then((response) => {
           const json = response.data;
           resolve(json);
         })
-        .catch(error => {
+        .catch((error) => {
           reject(error);
         });
     });
