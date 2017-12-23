@@ -1,7 +1,8 @@
 import ConverUnits from 'convert-units';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import togpx from 'togpx';
+// import geolib from 'geolib';
+// import togpx from 'togpx';
 import { setGPX } from '../redux/actions';
 import ApiHelper from '../js/ApiHelper';
 import Constants from '../js/Constants';
@@ -16,43 +17,22 @@ export class RouteRowItem extends Component {
     const useMetric = localStorage.getItem(Constants.storageKeys.USE_METRIC) || false;
     this.state = { dataForMap: null, useMetric: useMetric === 'true' };
   }
-  geoJsonForData(json) {
-    const coordinates = [];
-    json.points.latitudes.forEach((lat, idx) => {
-      const lng = json.points.longitudes[idx];
-      const obj = [lng, lat];
-      if (json.points.altitudes && json.points.altitudes.length > 0) {
-        obj.push(json.points.altitudes[idx]);
-      }
-      coordinates.push(obj);
-    });
-    const geoJson = {
-      type: 'FeatureCollection',
-      features: [
-        {
-          type: 'Feature',
-          properties: { name: this.props.route.Name },
-          geometry: { type: 'LineString', coordinates },
-        },
-      ],
-    };
-    return geoJson;
-  }
-  downloadFile(json) {
-    const geoJson = this.geoJsonForData(json);
-    const forBlob = togpx(geoJson);
-    const blob = new Blob([forBlob], { type: 'application/gpx+xml' });
-    const a = window.document.createElement('a');
-    a.href = window.URL.createObjectURL(blob);
-    a.download = `${this.props.route.RouteID}.gpx`;
 
-    // Append anchor to body.
-    document.body.appendChild(a);
-    a.click();
+  // downloadFile(json) {
+  //   const geoJson = geolib.geoJsonForData(json);
+  //   const forBlob = togpx(geoJson);
+  //   const blob = new Blob([forBlob], { type: 'application/gpx+xml' });
+  //   const a = window.document.createElement('a');
+  //   a.href = window.URL.createObjectURL(blob);
+  //   a.download = `${this.props.route.RouteID}.gpx`;
 
-    // Remove anchor from body
-    document.body.removeChild(a);
-  }
+  //   // Append anchor to body.
+  //   document.body.appendChild(a);
+  //   a.click();
+
+  //   // Remove anchor from body
+  //   document.body.removeChild(a);
+  // }
   fetchRouteDetails() {
     const self = this;
     return new Promise((resolve) => {
@@ -89,14 +69,20 @@ export class RouteRowItem extends Component {
           </h5>
           <h6 className="card-subtitle text-muted">Support card subtitle</h6>
         </div>
-        <div className="card-body">
+        <div className="card-body">        
           <button
             onClick={() => {
-              self.fetchRouteDetails().then((r) => {
-                self.downloadFile(r);
+              //http://www.movescount.com/Move/ExportRoute/3030464?format=gpx
+              const url = `http://www.movescount.com/Move/ExportRoute/${s.RouteID}?format=gpx`
+              chrome.downloads.download({
+                url,
+                filename: `${s.RouteID}.gpx`, // Optional
               });
+              // self.fetchRouteDetails().then((r) => {
+              //   self.downloadFile(r);
+              // });
             }}
-            className="card-link"
+            className="card-link btn btn-secondary"
           >
             gpx
           </button>
@@ -111,7 +97,7 @@ export class RouteRowItem extends Component {
                 this.setState({ dataForMap: null });
               }
             }}
-            className="card-link"
+            className="card-link btn btn-secondary"
           >
             map
           </button>

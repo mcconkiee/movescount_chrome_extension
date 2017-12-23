@@ -14,5 +14,8 @@ class ApiHelper {
         });
     });
   }
+  fetchRoutes() {
+    return this.fetch('http://www.movescount.com/api/routes/private')
+  }
 }
 export default new ApiHelper();

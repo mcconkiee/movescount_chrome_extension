@@ -36,7 +36,7 @@ const MoveRowItem = (props) => {
               filename: `${s.MoveID}.gpx`, // Optional
             });
           }}
-          className="card-link"
+          className="card-link btn btn-secondary"
         >
           gpx
         </button>
@@ -47,7 +47,7 @@ const MoveRowItem = (props) => {
             //   this.props.dispatch(setGPX(dta));
             // });
           }}
-          className="card-link"
+          className="card-link btn btn-secondary"
         >
           map
         </button>

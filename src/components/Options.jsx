@@ -1,9 +1,10 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
 import React, { Component } from 'react';
+import ApiHelper from '../js/ApiHelper';
 import ChromeHelper from '../js/chrome-helpers';
 import Constants from '../js/Constants';
-import '../styles/index.css';
+import '../styles/index.scss';
 import '../styles/theme.css';
 import '../styles/suunto.css';
 
@@ -30,37 +31,47 @@ export class Options extends Component {
       [name]: value,
     });
   }
+
   render() {
     return (
       <div className="container">
         <div>
-          <header>
+          
+          <section>
             <div>
-              <h1>Cookie Info</h1>
-            </div>
-          </header>
-          <div>
-            <i className="icon-4" />
-          </div>
-          <div>
-            <h1>Settings</h1>
-            <div>
-              <h3>Units</h3>
+              <h1>Settings</h1>
+              <hr/>
               <div>
-                <label htmlFor="useMetric">
-                  <input
-                    defaultChecked={this.state.useMetric === 'true'}
-                    name="useMetric"
-                    type="checkbox"
-                    id="useMetric"
-                    onChange={this.handleInputChange}
-                  />
-                  Use metric (e.g. kms)
-                </label>
+                <h3>Units</h3>
+                <div>
+                  <label htmlFor="useMetric">
+                    <input
+                      defaultChecked={this.state.useMetric === 'true'}
+                      name="useMetric"
+                      type="checkbox"
+                      id="useMetric"
+                      onChange={this.handleInputChange}
+                    />
+                    Use metric (e.g. kms)
+                  </label>
+                </div>
               </div>
             </div>
-          </div>
-          <pre>{this.state.cookie ? JSON.stringify(this.state.cookie) : 'no cookie found'}</pre>
+          </section>
+          <section>
+            <div>
+              <h1>Routes</h1>
+              <hr/>
+              <button className="btn btn-primary">Download all my routes</button>
+            </div>
+          </section>
+          <hr/>
+          <section>
+            <h3>Debug</h3>            
+            <div>
+              <pre>{this.state.cookie ? JSON.stringify(this.state.cookie) : 'no cookie found'}</pre>
+            </div>
+          </section>
         </div>
       </div>
     );

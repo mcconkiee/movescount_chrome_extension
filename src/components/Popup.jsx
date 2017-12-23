@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'font-awesome/css/font-awesome.min.css';
-import '../styles/index.css';
+import '../styles/index.scss';
 import '../styles/theme.css';
 import ApiHelper from '../js/ApiHelper';
 import ChromeHelper from '../js/chrome-helpers';
@@ -201,7 +201,7 @@ class Popup extends Component {
   fetchRoutes() {
     const self = this;
     this.setState({ loading: true });
-    ApiHelper.fetch('http://www.movescount.com/api/routes/private')
+    ApiHelper.fetchRoutes()
       .then((response) => {
         const json = response;
         self.setState({ data: json, loading: false });
