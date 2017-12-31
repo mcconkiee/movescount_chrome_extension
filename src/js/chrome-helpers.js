@@ -2,7 +2,8 @@ class ChromeHelper {
   cookie() {
     return new Promise((resolve) => {
       chrome.cookies.get({ name: 'MovesCountCookie', url: 'http://www.movescount.com' }, (cookie) => {
-        resolve(cookie);
+        const reqCookie = `${cookie.name}=${cookie.value}`;
+        resolve({ cookie, forRequest: reqCookie });
       });
     });
   }

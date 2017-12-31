@@ -1,7 +1,7 @@
 import ConverUnits from 'convert-units';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import geolib from 'geolib';
+import geolib from 'geolib';
 // import togpx from 'togpx';
 import { setGPX } from '../redux/actions';
 import ApiHelper from '../js/ApiHelper';
@@ -69,11 +69,11 @@ export class RouteRowItem extends Component {
           </h5>
           <h6 className="card-subtitle text-muted">Support card subtitle</h6>
         </div>
-        <div className="card-body">        
+        <div className="card-body">
           <button
             onClick={() => {
-              //http://www.movescount.com/Move/ExportRoute/3030464?format=gpx
-              const url = `http://www.movescount.com/Move/ExportRoute/${s.RouteID}?format=gpx`
+              // http://www.movescount.com/Move/ExportRoute/3030464?format=gpx
+              const url = `http://www.movescount.com/Move/ExportRoute/${s.RouteID}?format=gpx`;
               chrome.downloads.download({
                 url,
                 filename: `${s.RouteID}.gpx`, // Optional
@@ -90,7 +90,7 @@ export class RouteRowItem extends Component {
             onClick={() => {
               if (!this.state.dataForMap) {
                 self.fetchRouteDetails().then((r) => {
-                  const dta = self.geoJsonForData(r);
+                  const dta = geolib.geoJsonForData(r, { name: s.Name });
                   this.props.dispatch(setGPX(dta));
                 });
               } else {

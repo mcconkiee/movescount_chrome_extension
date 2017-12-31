@@ -26,12 +26,7 @@
     "notifications",
     "tabs",
     "http://www.movescount.com/*",
+    "http://localhost/*",
     "activeTab"
-  ],
-  "content_scripts": [
-    {
-      "matches": ["http://www.movescount.com/*"],
-      "js": ["modifyhtml.js"]
-    }
   ]
 }

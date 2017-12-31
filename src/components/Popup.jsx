@@ -60,7 +60,7 @@ class Popup extends Component {
         <ul className="list-group">
           {sample.map(s => (
             <li key={s.MoveID} className="list-group-item">
-              <MoveRowItem move={s} />
+              <MoveRowItem move={s} onError={e => this.setState({error: e})} />
             </li>
           ))}
         </ul>
@@ -81,7 +81,7 @@ class Popup extends Component {
       </div>
     );
   }
-  mapUI() {
+  mapUI() {    
     return <MovesMap data={this.props.gpx} />;
   }
   paginationUI() {
@@ -179,7 +179,7 @@ class Popup extends Component {
   fetchMoves() {
     const self = this;
     this.setState({ loading: true });
-    ApiHelper.fetch('http://www.movescount.com/Move/MoveList')
+    ApiHelper.fetchMoves()
       .then((response) => {
         const json = response;
         const keys = Object.keys(json.Schema);

@@ -1,9 +1,8 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'font-awesome/css/font-awesome.min.css';
 import React, { Component } from 'react';
 import ApiHelper from '../js/ApiHelper';
 import ChromeHelper from '../js/chrome-helpers';
 import Constants from '../js/Constants';
+import Tab from './Tab';
 import '../styles/index.scss';
 import '../styles/theme.css';
 import '../styles/suunto.css';
@@ -14,13 +13,89 @@ export class Options extends Component {
     super(props);
     instance = this;
     const useMetric = localStorage.getItem(Constants.storageKeys.USE_METRIC);
-    this.state = { cookie: null, useMetric };
+    this.state = {
+      activeTab: null,
+      error: null,
+      cookie: null,
+      useMetric,
+    };
   }
   componentWillMount() {
     ChromeHelper.cookie().then((cookie) => {
+      console.log(cookie);
+
       instance.setState({ cookie });
     });
     this.handleInputChange = this.handleInputChange.bind(this);
+    const self = this;
+    setTimeout(() => {
+      if (self.state.activeTab === null) {
+        self.setState({ activeTab: self.settingsTab });
+      }
+    }, 300);
+  }
+
+  settingsSection() {
+    return (
+      <div>
+        <h3>Units</h3>
+        <div>
+          <label htmlFor="useMetric">
+            <input
+              defaultChecked={this.state.useMetric === 'true'}
+              name="useMetric"
+              type="checkbox"
+              id="useMetric"
+              onChange={this.handleInputChange}
+            />
+            Use metric (e.g. kms)
+          </label>
+        </div>
+      </div>
+    );
+  }
+  downloadSection() {
+    return (
+      <div>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            const options = {
+              sendTo: 'eric@ericmcconkie.com',
+              format: 'gpx',
+            };
+            ApiHelper.downloadMoves(this.state.cookie.forRequest, options)
+              .then((response) => {
+                this.setState({ download: response });
+              })
+              .catch((e) => {
+                this.setState({ error: e });
+              });
+          }}
+        >
+          Download all my Moves
+        </button>
+        &nbsp;
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            const options = {
+              sendTo: 'eric@ericmcconkie.com',
+              format: 'gpx',
+            };
+            ApiHelper.downloadRoutes(this.state.cookie.forRequest, options)
+              .then((response) => {
+                this.setState({ download: response });
+              })
+              .catch((e) => {
+                this.setState({ error: e });
+              });
+          }}
+        >
+          Download all my routes
+        </button>
+      </div>
+    );
   }
   handleInputChange(event) {
     const { target } = event;
@@ -31,47 +106,77 @@ export class Options extends Component {
       [name]: value,
     });
   }
-
   render() {
+    console.log(this.state);
+
     return (
       <div className="container">
         <div>
-          
-          <section>
-            <div>
-              <h1>Settings</h1>
-              <hr/>
-              <div>
-                <h3>Units</h3>
-                <div>
-                  <label htmlFor="useMetric">
-                    <input
-                      defaultChecked={this.state.useMetric === 'true'}
-                      name="useMetric"
-                      type="checkbox"
-                      id="useMetric"
-                      onChange={this.handleInputChange}
-                    />
-                    Use metric (e.g. kms)
-                  </label>
-                </div>
+          <div>
+            <ul className="nav nav-tabs" role="tablist">
+              <Tab
+                ref={(tab) => {
+                  this.settingsTab = tab;
+                }}
+                onClick={(e) => {
+                  this.setState({ activeTab: this.settingsTab });
+                }}
+                title="Settings"
+                active={this.state.activeTab}
+              />
+              <Tab
+                ref={(tab) => {
+                  this.donwloadTab = tab;
+                }}
+                onClick={(e) => {
+                  this.setState({ activeTab: this.donwloadTab });
+                }}
+                title="Download"
+                active={this.state.activeTab}
+              />
+
+              <Tab
+                ref={(tab) => {
+                  this.debugTab = tab;
+                }}
+                onClick={(e) => {
+                  this.setState({ activeTab: this.debugTab });
+                }}
+                title="Debug"
+                active={this.state.activeTab}
+              />
+            </ul>
+
+            <div className="tab-content">
+              <div
+                role="tabpanel"
+                className={`tab-pane ${
+                  this.state.activeTab === this.settingsTab ? 'active' : null
+                }`}
+                id="settings"
+              >
+                {this.settingsSection()}
+              </div>
+              <div
+                role="tabpanel"
+                className={`tab-pane ${
+                  this.state.activeTab === this.donwloadTab ? 'active' : null
+                }`}
+                id="download"
+              >
+                {this.downloadSection()}
+              </div>
+              <div
+                role="tabpanel"
+                className={`tab-pane ${this.state.activeTab === this.debugTab ? 'active' : null}`}
+                id="debug"
+              >
+                <pre>
+                  {this.state.cookie ? JSON.stringify(this.state.cookie) : 'no cookie found'}
+                </pre>
               </div>
             </div>
-          </section>
-          <section>
-            <div>
-              <h1>Routes</h1>
-              <hr/>
-              <button className="btn btn-primary">Download all my routes</button>
-            </div>
-          </section>
-          <hr/>
-          <section>
-            <h3>Debug</h3>            
-            <div>
-              <pre>{this.state.cookie ? JSON.stringify(this.state.cookie) : 'no cookie found'}</pre>
-            </div>
-          </section>
+          </div>
         </div>
       </div>
     );
