@@ -7,7 +7,6 @@ import '../styles/theme.css';
 import ApiHelper from '../js/ApiHelper';
 import ChromeHelper from '../js/chrome-helpers';
 import MoveRowItem from './MoveRowItem';
-import MovesMap from './MovesMap';
 
 import reducers from '../redux/reducers';
 import RouteRowItem from './RouteRowItem';
@@ -60,7 +59,7 @@ class Popup extends Component {
         <ul className="list-group">
           {sample.map(s => (
             <li key={s.MoveID} className="list-group-item">
-              <MoveRowItem move={s} onError={e => this.setState({error: e})} />
+              <MoveRowItem move={s} onError={e => this.setState({ error: e })} />
             </li>
           ))}
         </ul>
@@ -81,9 +80,7 @@ class Popup extends Component {
       </div>
     );
   }
-  mapUI() {    
-    return <MovesMap data={this.props.gpx} />;
-  }
+
   paginationUI() {
     return (
       <div className="btn-group paginationUI">
@@ -156,10 +153,7 @@ class Popup extends Component {
   }
   viewForData() {
     return this.state.data.length > 0 ? (
-      <div>
-        {this.mapUI()}
-        {this.listMovesData()}
-      </div>
+      <div>{this.listMovesData()}</div>
     ) : (
       <div>
         <p>No data found</p>
@@ -183,7 +177,7 @@ class Popup extends Component {
       .then((response) => {
         const json = response;
         const keys = Object.keys(json.Schema);
-        const data = json.Data; // array of arrays , each 52 big
+        const data = json.Data.reverse(); // array of arrays , each 52 big
         const objects = [];
         data.forEach((dataObject) => {
           const pojo = {};
@@ -224,17 +218,19 @@ class Popup extends Component {
             <h3>Please log into your Movescount account</h3>
           </div>
         ) : null}
-        {this.state.loading ? (
-          <div>
-            <h3>loading...</h3>
-          </div>
-        ) : (
-          <div className="container">
-            <div>{this.filterView()}</div>
-            <div>{this.paginationUI()}</div>
-            <div className="main-content">{this.viewForData()}</div>
-          </div>
-        )}
+        <div className="container">
+          {this.state.loading ? (
+            <div>
+              <h3>loading...</h3>
+            </div>
+          ) : (
+            <div>
+              <div>{this.filterView()}</div>
+              <div>{this.paginationUI()}</div>
+              <div className="main-content">{this.viewForData()}</div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

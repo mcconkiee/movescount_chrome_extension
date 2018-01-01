@@ -1,11 +1,13 @@
-#map {
+.moves-map {
   height: 350px;
   width: 100%;
-  background-color: green;
+  &.no-geo-data {
+    height: inherit;
+  }
   .leaflet-container {
     height: 100%;
   }
-  #map-container {
+  .map-container {
     height: inherit;
   }
 }
