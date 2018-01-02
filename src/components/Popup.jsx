@@ -59,7 +59,7 @@ class Popup extends Component {
         <ul className="list-group">
           {sample.map(s => (
             <li key={s.MoveID} className="list-group-item">
-              <MoveRowItem move={s} onError={e => this.setState({ error: e })} />
+              <MoveRowItem data={s} onError={e => this.setState({ error: e })} />
             </li>
           ))}
         </ul>
@@ -73,7 +73,7 @@ class Popup extends Component {
         <ul className="list-group">
           {sample.map(s => (
             <li key={s.RouteID} className="list-group-item">
-              <RouteRowItem route={s} />
+              <MoveRowItem data={s} onError={e => this.setState({ error: e })} />
             </li>
           ))}
         </ul>
@@ -174,18 +174,7 @@ class Popup extends Component {
     const self = this;
     this.setState({ loading: true });
     ApiHelper.fetchMoves()
-      .then((response) => {
-        const json = response;
-        const keys = Object.keys(json.Schema);
-        const data = json.Data.reverse(); // array of arrays , each 52 big
-        const objects = [];
-        data.forEach((dataObject) => {
-          const pojo = {};
-          dataObject.forEach((dataValue, idx) => {
-            pojo[keys[idx]] = dataValue;
-          });
-          objects.push(pojo);
-        });
+      .then((objects) => {
         self.setState({ data: objects, loading: false });
       })
       .catch((error) => {
@@ -196,9 +185,8 @@ class Popup extends Component {
     const self = this;
     this.setState({ loading: true });
     ApiHelper.fetchRoutes()
-      .then((response) => {
-        const json = response;
-        self.setState({ data: json, loading: false });
+      .then((objects) => {
+        self.setState({ data: objects, loading: false });
       })
       .catch((error) => {
         self.setState({ error, coookie: null, loading: false });

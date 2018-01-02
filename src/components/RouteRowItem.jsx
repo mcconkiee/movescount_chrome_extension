@@ -18,21 +18,6 @@ export class RouteRowItem extends Component {
     this.state = { dataForMap: null, useMetric: useMetric === 'true' };
   }
 
-  // downloadFile(json) {
-  //   const geoJson = geolib.geoJsonForData(json);
-  //   const forBlob = togpx(geoJson);
-  //   const blob = new Blob([forBlob], { type: 'application/gpx+xml' });
-  //   const a = window.document.createElement('a');
-  //   a.href = window.URL.createObjectURL(blob);
-  //   a.download = `${this.props.route.RouteID}.gpx`;
-
-  //   // Append anchor to body.
-  //   document.body.appendChild(a);
-  //   a.click();
-
-  //   // Remove anchor from body
-  //   document.body.removeChild(a);
-  // }
   fetchRouteDetails() {
     const self = this;
     return new Promise((resolve) => {
@@ -78,9 +63,6 @@ export class RouteRowItem extends Component {
                 url,
                 filename: `${s.RouteID}.gpx`, // Optional
               });
-              // self.fetchRouteDetails().then((r) => {
-              //   self.downloadFile(r);
-              // });
             }}
             className="card-link btn btn-secondary"
           >
