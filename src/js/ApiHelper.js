@@ -93,14 +93,22 @@ class ApiHelper {
   downloadMoves(cookie, options) {
     return this.fetchMoves().then(moves =>
       new Promise((resolve, reject) => {
-        const ids = moves.Data.map(m => m[0]);
+        // TODO - FILTER DATES BY RANGE IN OPTIONS
+        let needle = moves;
+        if (options.dates) {
+          const start = options.dates.startDate;
+          const end = options.dates.endDate;
+          needle = needle.filter(m => moment(m.StartTime).isBetween(start, end));
+        }
+        // ids to download
+        const ids = needle.map(m => m.MoveID);
+
         axios
           .post('http://localhost:8080/routes', {
             cookie,
             type: 'move',
-            format: options.format,
-            sendTo: options.sendTo,
             data: ids,
+            options,
           })
           .then((response) => {
             console.log(response, 'donwload complete');

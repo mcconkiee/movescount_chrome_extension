@@ -9,7 +9,6 @@ import ChromeHelper from '../js/chrome-helpers';
 import MoveRowItem from './MoveRowItem';
 
 import reducers from '../redux/reducers';
-import RouteRowItem from './RouteRowItem';
 
 const FILTER = {
   MOVES: 'MOVES',

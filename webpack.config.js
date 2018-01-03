@@ -8,6 +8,8 @@ module.exports = {
   entry: {
     popup: './src/js/popup.jsx',
     options: './src/js/options.jsx',
+    jquery: './src/js/jquery.js',
+    bootstrap: './src/js/bootstrap.js',
     background: './src/js/background.js',
     modifyhtml: './src/modifyhtml.js',
   },
