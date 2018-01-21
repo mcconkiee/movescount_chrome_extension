@@ -104,7 +104,7 @@ class ApiHelper {
         const ids = needle.map(m => m.MoveID);
 
         axios
-          .post('http://localhost:8080/routes', {
+          .post('http://localhost:8080/routes/download', {
             cookie,
             type: 'move',
             data: ids,
@@ -119,6 +119,17 @@ class ApiHelper {
             reject(error);
           });
       }));
+  }
+  uploadFiles(file, options) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('cookie', options.cookie);
+    const config = {
+      headers: {
+        'content-type': 'multipart/form-data',
+      },
+    };
+    return axios.post('http://localhost:8080/routes/upload', formData, config);
   }
 }
 export default new ApiHelper();

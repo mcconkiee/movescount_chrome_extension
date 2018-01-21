@@ -92,7 +92,7 @@ export class Options extends Component {
           data-toggle="modal"
           data-target="#downloadMovesModal"
         >
-          Download all my Moves
+          Download Moves
         </button>
         &nbsp;
         <button
@@ -115,7 +115,40 @@ export class Options extends Component {
               });
           }}
         >
-          Download all my routes
+          Download routes
+        </button>
+      </div>
+    );
+  }
+  uploadSection() {
+    const self = this;
+    return (
+      <div className="form-group">
+        <label htmlFor="zip">File</label>
+        <input
+          ref={(fileUpload) => {
+            this.fileUpload = fileUpload;
+          }}
+          name="zip"
+          id="zip"
+          type="file"
+          className="form-control"
+        />
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            ApiHelper.uploadFiles(this.fileUpload.files[0], {
+              cookie: this.state.cookie.forRequest,
+            })
+              .then((response) => {
+                console.log(response);
+              })
+              .catch((e) => {
+                console.log('error on upload', e);
+              });
+          }}
+        >
+          Upload
         </button>
       </div>
     );
@@ -164,6 +197,16 @@ export class Options extends Component {
                 title="Download"
                 active={this.state.activeTab}
               />
+              <Tab
+                ref={(tab) => {
+                  this.donwloadTab = tab;
+                }}
+                onClick={(e) => {
+                  this.setState({ activeTab: this.uploadTab });
+                }}
+                title="Upload"
+                active={this.state.activeTab}
+              />
 
               <Tab
                 ref={(tab) => {
@@ -202,6 +245,13 @@ export class Options extends Component {
               </div>
               <div
                 role="tabpanel"
+                className={`tab-pane ${this.state.activeTab === this.uploadTab ? 'active' : null}`}
+                id="upload-section"
+              >
+                {this.uploadSection()}
+              </div>
+              <div
+                role="tabpanel"
                 className={`tab-pane ${this.state.activeTab === this.debugTab ? 'active' : null}`}
                 id="debug"
               >
@@ -225,7 +275,7 @@ export class Options extends Component {
               <div className="modal-body">
                 {this.errorState()}
                 {this.downloadState()}
-                <div className='form-group'>
+                <div className="form-group">
                   <h3>Email</h3>
                   <div>
                     <label htmlFor="email">Please provide your email</label>
@@ -263,7 +313,7 @@ export class Options extends Component {
                     </div>
                   </div>
                 </div>
-                <div id="move-download-dates" className='form-group'>
+                <div id="move-download-dates" className="form-group">
                   <h3>Date Range</h3>
                   <label htmlFor="all-dates">Download All Moves?</label>&nbsp;
                   <input

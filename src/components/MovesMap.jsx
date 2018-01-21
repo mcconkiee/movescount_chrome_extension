@@ -3,8 +3,9 @@ import { Map, Marker, Popup, TileLayer, Polyline, GeoJSON } from 'react-leaflet'
 import Leaflet from 'leaflet';
 import '../styles/movemap.scss';
 
-const mapboxUrl =
-  'https://api.mapbox.com/styles/v1/mcconkiee/cj81wg9hw98g92rqmsfvj50zl/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWNjb25raWVlIiwiYSI6ImNpdWhhaGVmNDAwMDMyenFkNzhyenhuZXIifQ.XfcDN8aXK5UawZLuED6HrQ';
+// 'https://api.mapbox.com/styles/v1/mcconkiee/cj81wg9hw98g92rqmsfvj50zl/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWNjb25raWVlIiwiYSI6ImNpdWhhaGVmNDAwMDMyenFkNzhyenhuZXIifQ.XfcDN8aXK5UawZLuED6HrQ';
+const mapboxStyleId = 'cjbzmcuu970xq2qoyqbcytwme';
+const mapboxUrl = `https://api.mapbox.com/styles/v1/mcconkiee/${mapboxStyleId}/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWNjb25raWVlIiwiYSI6ImNpdWhhaGVmNDAwMDMyenFkNzhyenhuZXIifQ.XfcDN8aXK5UawZLuED6HrQ`;
 
 export class MovesMap extends Component {
   constructor(props) {

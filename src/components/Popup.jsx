@@ -21,6 +21,9 @@ const FILTER = {
 const MAX_NUM = 100;
 const paginate = function paginate(array, pageSize, pageNumber) {
   let pageNum = pageNumber;
+  if (pageNumber < 1) {
+    pageNum = 1;
+  }
   --pageNum; // because pages logically start with 1, but technically with 0
   return array.slice(pageNum * pageSize, (pageNum + 1) * pageSize);
 };
@@ -32,6 +35,7 @@ class Popup extends Component {
       cookie: null,
       data: [],
       page: 1,
+      chronological: true,
       loading: true,
     };
   }
@@ -52,6 +56,18 @@ class Popup extends Component {
   }
 
   movesUI() {
+    // const isChronologicalNow = this.state.chronological;
+    // const { data } = this.state;
+    // const unsorted = [].concat(data);
+    // let sorted = [];
+    // if (!isChronologicalNow) {
+    //   // order by start date
+    //   sorted = unsorted.sort((a, b) => a.StartTime > b.StartTime);
+    // } else {
+    //   sorted = unsorted.sort((a, b) => a.StartTime < b.StartTime);
+    // }
+
+    // const sample = paginate(sorted, MAX_NUM, this.state.page);
     const sample = paginate(this.state.data, MAX_NUM, this.state.page);
     return (
       <div>
@@ -126,30 +142,50 @@ class Popup extends Component {
   filterView() {
     const self = this;
     return (
-      <div className="btn-group">
-        <button
-          className={`btn btn-outline-secondary ${
-            this.state.filter === FILTER.MOVES ? 'active' : null
-          }`}
-          onClick={() => {
-            self.updateFilterState(FILTER.MOVES);
-          }}
-        >
-          Moves
-        </button>
-        <button
-          className={`btn btn-outline-secondary ${
-            this.state.filter === FILTER.ROUTES ? 'active' : null
-          }`}
-          onClick={() => {
-            self.updateFilterState(FILTER.ROUTES);
-          }}
-        >
-          Routes
-        </button>
+      <div>
+        <div className="btn-group">
+          <button
+            className={`btn btn-outline-secondary ${
+              this.state.filter === FILTER.MOVES ? 'active' : null
+            }`}
+            onClick={() => {
+              self.updateFilterState(FILTER.MOVES);
+            }}
+          >
+            Moves
+          </button>
+          <button
+            className={`btn btn-outline-secondary ${
+              this.state.filter === FILTER.ROUTES ? 'active' : null
+            }`}
+            onClick={() => {
+              self.updateFilterState(FILTER.ROUTES);
+            }}
+          >
+            Routes
+          </button>
+        </div>
       </div>
     );
   }
+  // TODO - add this :
+  chronologicalFilter() {
+    return (
+      <div className="form-group">
+        <label htmlFor="chronological">Show Newest First</label>
+        <input
+          className="form-control"
+          type="checkbox"
+          name="chronological"
+          checked={`${this.state.chronological ? 'checked' : ''}`}
+          onChange={() => {
+            this.setState({ chronological: !this.state.chronological, page: 1 });
+          }}
+        />
+      </div>
+    );
+  }
+
   viewForData() {
     return this.state.data.length > 0 ? (
       <div>{this.listMovesData()}</div>
@@ -166,7 +202,7 @@ class Popup extends Component {
       case FILTER.ROUTES:
         return this.routesUI();
       default:
-        return <div>Unsupported View</div>;
+        return <div>Unsupvported View</div>;
     }
   }
   fetchMoves() {

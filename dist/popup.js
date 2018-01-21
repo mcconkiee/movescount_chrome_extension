@@ -33495,7 +33495,7 @@ var ApiHelper = function () {
             return m.MoveID;
           });
 
-          _axios2.default.post('http://localhost:8080/routes', {
+          _axios2.default.post('http://localhost:8080/routes/download', {
             cookie: cookie,
             type: 'move',
             data: ids,
@@ -33509,6 +33509,19 @@ var ApiHelper = function () {
           });
         });
       });
+    }
+  }, {
+    key: 'uploadFiles',
+    value: function uploadFiles(file, options) {
+      var formData = new FormData();
+      formData.append('file', file);
+      formData.append('cookie', options.cookie);
+      var config = {
+        headers: {
+          'content-type': 'multipart/form-data'
+        }
+      };
+      return _axios2.default.post('http://localhost:8080/routes/upload', formData, config);
     }
   }]);
 
@@ -61026,6 +61039,9 @@ var FILTER = {
 var MAX_NUM = 100;
 var paginate = function paginate(array, pageSize, pageNumber) {
   var pageNum = pageNumber;
+  if (pageNumber < 1) {
+    pageNum = 1;
+  }
   --pageNum; // because pages logically start with 1, but technically with 0
   return array.slice(pageNum * pageSize, (pageNum + 1) * pageSize);
 };
@@ -61042,6 +61058,7 @@ var Popup = function (_Component) {
       cookie: null,
       data: [],
       page: 1,
+      chronological: true,
       loading: true
     };
     return _this;
@@ -61068,6 +61085,18 @@ var Popup = function (_Component) {
     value: function movesUI() {
       var _this2 = this;
 
+      // const isChronologicalNow = this.state.chronological;
+      // const { data } = this.state;
+      // const unsorted = [].concat(data);
+      // let sorted = [];
+      // if (!isChronologicalNow) {
+      //   // order by start date
+      //   sorted = unsorted.sort((a, b) => a.StartTime > b.StartTime);
+      // } else {
+      //   sorted = unsorted.sort((a, b) => a.StartTime < b.StartTime);
+      // }
+
+      // const sample = paginate(sorted, MAX_NUM, this.state.page);
       var sample = paginate(this.state.data, MAX_NUM, this.state.page);
       return _react2.default.createElement('div', null, _react2.default.createElement('ul', { className: 'list-group' }, sample.map(function (s) {
         return _react2.default.createElement('li', { key: s.MoveID, className: 'list-group-item' }, _react2.default.createElement(_MoveRowItem2.default, { data: s, onError: function onError(e) {
@@ -61132,7 +61161,7 @@ var Popup = function (_Component) {
     key: 'filterView',
     value: function filterView() {
       var self = this;
-      return _react2.default.createElement('div', { className: 'btn-group' }, _react2.default.createElement('button', {
+      return _react2.default.createElement('div', null, _react2.default.createElement('div', { className: 'btn-group' }, _react2.default.createElement('button', {
         className: 'btn btn-outline-secondary ' + (this.state.filter === FILTER.MOVES ? 'active' : null),
         onClick: function onClick() {
           self.updateFilterState(FILTER.MOVES);
@@ -61142,7 +61171,24 @@ var Popup = function (_Component) {
         onClick: function onClick() {
           self.updateFilterState(FILTER.ROUTES);
         }
-      }, 'Routes'));
+      }, 'Routes')));
+    }
+    // TODO - add this :
+
+  }, {
+    key: 'chronologicalFilter',
+    value: function chronologicalFilter() {
+      var _this5 = this;
+
+      return _react2.default.createElement('div', { className: 'form-group' }, _react2.default.createElement('label', { htmlFor: 'chronological' }, 'Show Newest First'), _react2.default.createElement('input', {
+        className: 'form-control',
+        type: 'checkbox',
+        name: 'chronological',
+        checked: '' + (this.state.chronological ? 'checked' : ''),
+        onChange: function onChange() {
+          _this5.setState({ chronological: !_this5.state.chronological, page: 1 });
+        }
+      }));
     }
   }, {
     key: 'viewForData',
@@ -61158,7 +61204,7 @@ var Popup = function (_Component) {
         case FILTER.ROUTES:
           return this.routesUI();
         default:
-          return _react2.default.createElement('div', null, 'Unsupported View');
+          return _react2.default.createElement('div', null, 'Unsupvported View');
       }
     }
   }, {
@@ -62453,7 +62499,9 @@ function _inherits(subClass, superClass) {
   }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
 }
 
-var mapboxUrl = 'https://api.mapbox.com/styles/v1/mcconkiee/cj81wg9hw98g92rqmsfvj50zl/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWNjb25raWVlIiwiYSI6ImNpdWhhaGVmNDAwMDMyenFkNzhyenhuZXIifQ.XfcDN8aXK5UawZLuED6HrQ';
+// 'https://api.mapbox.com/styles/v1/mcconkiee/cj81wg9hw98g92rqmsfvj50zl/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWNjb25raWVlIiwiYSI6ImNpdWhhaGVmNDAwMDMyenFkNzhyenhuZXIifQ.XfcDN8aXK5UawZLuED6HrQ';
+var mapboxStyleId = 'cjbzmcuu970xq2qoyqbcytwme';
+var mapboxUrl = 'https://api.mapbox.com/styles/v1/mcconkiee/' + mapboxStyleId + '/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWNjb25raWVlIiwiYSI6ImNpdWhhaGVmNDAwMDMyenFkNzhyenhuZXIifQ.XfcDN8aXK5UawZLuED6HrQ';
 
 var MovesMap = exports.MovesMap = function (_Component) {
   _inherits(MovesMap, _Component);
